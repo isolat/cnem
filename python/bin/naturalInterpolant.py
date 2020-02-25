@@ -39,7 +39,7 @@ sys.path.append('Z:/DATA/1/dev/actu/mesh')
 
 class interpol:
 
-    def __init__(self,XYZ_Noeud,IN_Tri_Ini,XYZ_Point=None,Type_FF=None,Mesher='python'):
+    def __init__(self,XYZ_Noeud,IN_Tri_Ini,XYZ_Point=None,Type_FF=None,Mesher='tetgen'):
 
         self.point_set=XYZ_Point is not None and Type_FF is not None
 

@@ -6,7 +6,7 @@ classdef naturalInterpolant < handle
       Locations(:,3) double {mustBeReal,mustBeNonNan,mustBeNonsparse}
       Constraints(:,3) double {mustBeReal,mustBeInteger,mustBeNonNan,mustBeNonsparse}
       Method {mustBeMember(Method,{'Sibson','Laplace','SibsonRaw'})}='Sibson'
-      Mesher {mustBeMember(Mesher,{'tetgen','matlab'})}='tetgen'
+      Mesher {mustBeMember(Mesher,{'tetgen','matlab'})}='matlab'
    end 
    properties (Access=private)
       Points_changed=false
@@ -126,6 +126,7 @@ classdef naturalInterpolant < handle
 
     properties(Access=public)
         In_Out
+        Nb_V
         Var_Int
         Mat_INT
         Mat_INT_NN
@@ -134,8 +135,7 @@ classdef naturalInterpolant < handle
         Mat_GradZ
     end
     properties(Access=private)
-        Nb_V
-       
+        
         nb_noeud_ini
         
         IN_New_Old

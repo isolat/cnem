@@ -1,19 +1,16 @@
 clc;
 delete *.o*
 
-tbb_dir='C:/ProgramFilesx86/IntelSWTools/compilers_and_libraries/windows/tbb';
-%tbb_dir='F:\A\DATA\1\dev\lib\tbb41_20130314oss';
+tbb_dir='../../tbb-2020.1/win/tbb';
+TBB_INC_DIR =[tbb_dir '/include'];
 
 %linux
-%TBB_INC_DIR =[tbb_dir '/include'];
 %TBB_LIB_DIR =[tbb_dir '/lib/intel64/cc4.1.0_libc2.4_kernel2.6.16.21'];
 
 %mac
-%TBB_INC_DIR =[tbb_dir '/include'];
 %TBB_LIB_DIR =[tbb_dir '/lib'];
 
 %win
-TBB_INC_DIR =[tbb_dir '/include'];
 TBB_LIB_DIR =[tbb_dir '/lib/intel64/vc14'];
 
 tbb_lib={'tbb'};

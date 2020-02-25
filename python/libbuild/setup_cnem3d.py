@@ -1,22 +1,17 @@
 #-------------------------------------------------------------------------------
 # Modify occording your tbb instalation path
+# and run on windows cmd "SET VS90COMNTOOLS=%VS140COMNTOOLS%" befor building
 
-# SET VS90COMNTOOLS=%VS140COMNTOOLS%
-
-TBB_DIR='C:/ProgramFilesx86/IntelSWTools/compilers_and_libraries/windows/tbb'
-	
-	      
-#win
+TBB_DIR='../../tbb-2020.1/win/tbb'
 TBB_INC_DIR=TBB_DIR+'/include'
+
+#win
 TBB_LIB_DIR=TBB_DIR+'/lib/intel64/vc14'
-#TBB_LIB_DIR=TBB_DIR+'/lib/ia32/vc14'
 
 #linux
-#TBB_INC_DIR=TBB_DIR+'/include'
 #TBB_LIB_DIR=TBB_DIR+'/lib/intel64/gcc4.4'
 
 ##mac
-#TBB_INC_DIR=TBB_DIR+'/include'
 #TBB_LIB_DIR=TBB_DIR+'/lib'
 
 #-------------------------------------------------------------------------------

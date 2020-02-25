@@ -24,32 +24,27 @@ axis vis3d
 axis equal
 hold off;
 
-%% initialize the interpolator
-
-Type_FF = 0;
-%IN_Tri_Ini
-Interpol=m_cnem3d_interpol(false,XYZ_Noeud,[],XYZ_Point,Type_FF);
-
-%% interpolate a filds
+%% initialize the interpolator and interpolate a filds
 % test : Var = XYZ_Noeud ==> interpolated Var on XYZ_Point = XYZ_Point
 
-Var=XYZ_Noeud;
-%Var_Int=Interpol.interpolate(Var);
-Var_Int=Interpol.mat_interpol_glob*Var;
+Fxyz=naturalInterpolant(XYZ_Noeud,XYZ_Noeud,'Sibson',IN_Tri_Ini,'tetgen');% tetgen : convex + non convex delaunay mesher
+%Fxyz=naturalInterpolant(XYZ_Noeud,XYZ_Noeud,'Sibson');% matlab : only convex delaunay mesher
+
+Var_Int=Fxyz.eval(XYZ_Point);
 
 %% cal error
 
 dif=Var_Int-XYZ_Point;
 j=0;
-ind_p_in=zeros(sum(Interpol.In_Out),1);
-for i=1:size(Interpol.In_Out,1)
-    if Interpol.In_Out(i)
+ind_p_in=zeros(sum(Fxyz.In_Out),1);
+for i=1:size(Fxyz.In_Out,1)
+    if Fxyz.In_Out(i)
         j=j+1;
         ind_p_in(j)=i;
     end
 end
 
-int_p_out=setdiff(1:size(Interpol.In_Out,1),ind_p_in);
+int_p_out=setdiff(1:size(Fxyz.In_Out,1),ind_p_in);
 
 err=max(max(abs(dif(ind_p_in,:))))
 
