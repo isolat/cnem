@@ -7,7 +7,7 @@ This implementation is platform independent, and for python and Matlab users, th
 Authors : amran.illoul(at)ensam.eu , philippe.lorong(at)ensam.eu
 
 # Dependency
-* **TETGEN** : To build the initial 3d constrained delaunay tetradedrisation we use TETGEN devellopped by Hang SI (open source library, AGPL v.3, http://www.tetgen.org/ ). TETGEN 1.5.0 is supplied in the package.
+* **TETGEN** : To build the initial 3d constrained delaunay tetradedrisation we use TETGEN devellopped by Hang SI (open source library, AGPL v.3, http://www.tetgen.org/ ). TETGEN 1.5.1 is supplied in the package.
 
 * **TBB** : for parallelization, open source library, gpl v2 licence, http://www.threadingbuildingblocks.org/ 
 
