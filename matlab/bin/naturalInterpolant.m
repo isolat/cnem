@@ -2,7 +2,7 @@
 classdef naturalInterpolant < handle
    properties (Access=public) 
       Points(:,3) double {mustBeReal,mustBeNonNan,mustBeNonsparse}
-      Values(:,3) double {mustBeReal,mustBeNonNan,mustBeNonsparse}
+      Values(:,:) double {mustBeReal,mustBeNonNan,mustBeNonsparse}
       Locations(:,3) double {mustBeReal,mustBeNonNan,mustBeNonsparse}
       Constraints(:,3) double {mustBeReal,mustBeInteger,mustBeNonNan,mustBeNonsparse}
       Method {mustBeMember(Method,{'Sibson','Laplace','SibsonRaw'})}='Sibson'
@@ -105,6 +105,16 @@ classdef naturalInterpolant < handle
            obj.interpolate();
            Evaluation=obj.Var_Int;
        end
+       
+       function Mat=mat_interpol_glob(obj)
+            if size(obj.Mat_INT_NN,1)~=0
+                n=size(obj.Mat_INT_NN,2);
+                m=size(obj.Mat_INT,2);
+                Mat=obj.Mat_INT(:,1:n)+obj.Mat_INT(:,n+1:m)*obj.Mat_INT_NN;
+            else
+                Mat=obj.Mat_INT;
+            end
+        end
        
 %        function ret=subsref(obj,Locations)
 %            if Locations.type()=='()'
@@ -319,16 +329,6 @@ classdef naturalInterpolant < handle
                 Var_Add_Node=obj.Mat_INT_NN*Var;
             end 
             obj.Var_Int=obj.Mat_INT*[Var;Var_Add_Node];
-        end
-        
-        function Mat=mat_interpol_glob(obj)
-            if size(obj.Mat_INT_NN,1)~=0
-                n=size(obj.Mat_INT_NN,2);
-                m=size(obj.Mat_INT,2);
-                Mat=obj.Mat_INT(:,1:n)+obj.Mat_INT(:,n+1:m)*obj.Mat_INT_NN;
-            else
-                Mat=obj.Mat_INT;
-            end
         end
     end
     methods(Static)
