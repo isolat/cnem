@@ -28,7 +28,7 @@ Please report bugs to illoul_lounes@yahoo.fr */
 //---------------------------------------------------------------------------//
 
 void Calcul_Erreur_Gradiant_Stabilise
-(concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee,double* Tab_Volume_Cellule,double* Tab_Noeud,long Nb_Noeud)
+(tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee,double* Tab_Volume_Cellule,double* Tab_Noeud,long Nb_Noeud)
 {
     //ofstream data("erreur_moy.txt");
     //data.precision(16);
@@ -52,7 +52,7 @@ void Calcul_Erreur_Gradiant_Stabilise
         C_Vec3d Grad_Champs_Y(0.,0.,0.);
         C_Vec3d Grad_Champs_Z(0.,0.,0.);
     
-        concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::iterator k;
+		tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::iterator k;
         for(k=Tab_Gradiant_Stabilisee[i]->begin();k!=Tab_Gradiant_Stabilisee[i]->end();k++)
         {
             pair<const long,C_Vec3d> Paire_k=(*k);
@@ -169,18 +169,18 @@ void Calcul_Erreur_Gradiant_Stabilise
 //---------------------------------------------------------------------------//
 
 void Elimination_Nouveaux_Noeuds_DVC_de_GS
-(concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**& Tab_Gradiant_Stabilisee,double*& Tab_Volume_Cellule,
+(tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**& Tab_Gradiant_Stabilisee,double*& Tab_Volume_Cellule,
  long Nb_Noeud_Ini,long Nb_Noeud,vector<long>* P_Ind_Voisin,vector<double>* P_Phi_Voisin)
 {
     //cout<<"\nElimination nouveaux noeuds du gradiant stabilisee-----------------------------"<<endl;
 
-    concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::accessor chm_acc;
+	tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::accessor chm_acc;
 
     long i;
     for(i=0;i<Nb_Noeud_Ini;i++)
     {
-        concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>* P_New_Gradiant_Stabilisee_i=new concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>;
-        concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::iterator j;
+		tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>* P_New_Gradiant_Stabilisee_i=new tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>;
+		tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::iterator j;
         for(j=Tab_Gradiant_Stabilisee[i]->begin();j!=Tab_Gradiant_Stabilisee[i]->end();j++)
         {
             pair<const long,C_Vec3d> Paire_j=(*j);
@@ -233,18 +233,18 @@ void Elimination_Nouveaux_Noeuds_DVC_de_GS
         Tab_Volume_Cellule[i]=0.;
     }
 
-    Tab_Gradiant_Stabilisee=(concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**)realloc
-        (Tab_Gradiant_Stabilisee,sizeof(concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>*)*Nb_Noeud_Ini);
+    Tab_Gradiant_Stabilisee=(tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**)realloc
+        (Tab_Gradiant_Stabilisee,sizeof(tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>*)*Nb_Noeud_Ini);
     Tab_Volume_Cellule=(double*)realloc(Tab_Volume_Cellule,sizeof(double)*Nb_Noeud_Ini);
 }
 
 //---------------------------------------------------------------------------//
 
-class GradStabCal_B_Task: public task 
+class GradStabCal_B_Task: public tbb::task 
 {
 public:
     C_Meshless_3d* PML;
-    concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee;
+    tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee;
     double* Tab_Volume_Cellule;
     long Type_FF;
     long Sup_NN_GS;
@@ -255,15 +255,15 @@ public:
     vector<double>* Tab_Coord_Noeud_Elem;
     long* P_Ind_Sommet;
     long* P_Ind_Tet;
-    mutex* P_Mutex_IS;
-    mutex* P_Mutex_IT;
-    mutex* P_Mutex_P;
+    tbb::mutex* P_Mutex_IS;
+	tbb::mutex* P_Mutex_IT;
+	tbb::mutex* P_Mutex_P;
     long Nb_S;
     long Nb_T;
     long id_task;
 
     GradStabCal_B_Task(C_Meshless_3d* PML_,
-                       concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee_,
+		               tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee_,
                        double* Tab_Volume_Cellule_,
                        long Type_FF_,
                        long Sup_NN_GS_,
@@ -274,9 +274,9 @@ public:
                        vector<double>* Tab_Coord_Noeud_Elem_,
                        long* P_Ind_Sommet_, 
                        long* P_Ind_Tet_, 
-                       mutex* P_Mutex_IS_,
-                       mutex* P_Mutex_IT_,
-                       mutex* P_Mutex_P_,
+					   tbb::mutex* P_Mutex_IS_,
+					   tbb::mutex* P_Mutex_IT_,
+					   tbb::mutex* P_Mutex_P_,
                        long id_task_):
                        PML(PML_),
                        Tab_Gradiant_Stabilisee(Tab_Gradiant_Stabilisee_),
@@ -294,10 +294,10 @@ public:
                        P_Mutex_IT(P_Mutex_IT_),
                        P_Mutex_P(P_Mutex_P_),
                        id_task(id_task_){}
-    task* execute();
+	tbb::task* execute();
 };
 
-task* GradStabCal_B_Task::execute()
+tbb::task* GradStabCal_B_Task::execute()
 {
     //-----------------------------------------------------------------------//
 
@@ -321,7 +321,7 @@ task* GradStabCal_B_Task::execute()
     long Ind_Sommet;
     Nb_S=0;
     
-    concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::accessor chm_acc;
+	tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::accessor chm_acc;
     long Nb_C_Nb=-1;
 
     do
@@ -330,7 +330,7 @@ task* GradStabCal_B_Task::execute()
 // Début section critique...
 //---------------------------------------------------------------------------//
         {
-            mutex::scoped_lock Lock_IS(*P_Mutex_IS);
+			tbb::mutex::scoped_lock Lock_IS(*P_Mutex_IS);
             Ind_Sommet=*P_Ind_Sommet;
             (*P_Ind_Sommet)++;
         }
@@ -388,7 +388,7 @@ task* GradStabCal_B_Task::execute()
 
             //---------------------------------------------------------------//
 
-            concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>* P_Map_Contribution[4];
+			tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>* P_Map_Contribution[4];
             for(k=0;k<4;k++)
                 P_Map_Contribution[k]=Tab_Gradiant_Stabilisee[P_Sommet->Ind_Noeud[k]];
 
@@ -531,7 +531,7 @@ task* GradStabCal_B_Task::execute()
     if(id_task==0)cout<<endl;
         
     /*{
-        mutex::scoped_lock Lock_P(*P_Mutex_P);
+        tbb::mutex::scoped_lock Lock_P(*P_Mutex_P);
         cout<<"nb calcul : "<<Nb_S<<" err : "<<Erreur_Max_FF<<endl;
     }*/
 
@@ -559,7 +559,7 @@ task* GradStabCal_B_Task::execute()
 // Début section critique...
 //---------------------------------------------------------------------------//
         {
-            mutex::scoped_lock Lock_IT(*P_Mutex_IT);
+			tbb::mutex::scoped_lock Lock_IT(*P_Mutex_IT);
             Ind_Tet=*P_Ind_Tet;
             (*P_Ind_Tet)++;
         }
@@ -581,7 +581,7 @@ task* GradStabCal_B_Task::execute()
 
         Nb_T++;
 
-        concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>* P_Map_Contribution_i=Tab_Gradiant_Stabilisee[Tab_Ind_Cel_Elem_Tet->at(Ind_Tet)];
+		tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>* P_Map_Contribution_i=Tab_Gradiant_Stabilisee[Tab_Ind_Cel_Elem_Tet->at(Ind_Tet)];
 
         C_Sommet* P_Sommet_Pere=PML->Diag_Vor.List_Sommet[Tab_Ind_S_Elem_Tet->at(Ind_Tet)];
 
@@ -667,7 +667,7 @@ task* GradStabCal_B_Task::execute()
     if(id_task==0)cout<<endl;
         
     /*{
-        mutex::scoped_lock Lock_P(*P_Mutex_P);
+        tbb::mutex::scoped_lock Lock_P(*P_Mutex_P);
         cout<<"nb calcul : "<<Nb_T<<" err : "<<Erreur_Max_FF<<endl;
     }*/
     }
@@ -688,7 +688,7 @@ task* GradStabCal_B_Task::execute()
 
 void Integration_Stabilisee_Paral
 (C_Meshless_3d* PML,
- concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**& Tab_Gradiant_Stabilisee,double*& Tab_Volume_Cellule,
+ tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**& Tab_Gradiant_Stabilisee,double*& Tab_Volume_Cellule,
  long Type_Int,long Type_FF,long nb_thread,long Sup_NN_GS,
  vector<long>* P_Ind_Voisin,vector<double>* P_Phi_Voisin,
  vector<long>* Tab_Ind_Noeud_Tet,vector<long>* Tab_Ind_Cel_Elem_Tet,
@@ -702,23 +702,23 @@ void Integration_Stabilisee_Paral
 
     long Nb_Noeud=PML->Diag_Vor.Nb_Noeud;
 
-    Tab_Gradiant_Stabilisee=(concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**)malloc(Nb_Noeud*sizeof(concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>*));
+    Tab_Gradiant_Stabilisee=(tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**)malloc(Nb_Noeud*sizeof(tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>*));
     Tab_Volume_Cellule=(double*)malloc(Nb_Noeud*nb_thread*sizeof(double));
 
     long i;
     for(i=0;i<Nb_Noeud;i++)
-        Tab_Gradiant_Stabilisee[i]=new concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>; 
+        Tab_Gradiant_Stabilisee[i]=new tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>; 
     for(i=0;i<Nb_Noeud*nb_thread;i++)
         Tab_Volume_Cellule[i]=0.;
 
     //-----------------------------------------------------------------------//
 
-    task_list List_GradStabCal_Task;
+    tbb::task_list List_GradStabCal_Task;
     long Ind_Sommet=0;
     long Ind_Tet=0;
-    mutex Mutex_IS;
-    mutex Mutex_IT;
-    mutex Mutex_P;
+	tbb::mutex Mutex_IS;
+	tbb::mutex Mutex_IT;
+	tbb::mutex Mutex_P;
     
     //-----------------------------------------------------------------------//
         
@@ -731,7 +731,7 @@ void Integration_Stabilisee_Paral
             
             for(i=0;i<nb_thread;i++)
             {
-                GradStabCal_B_Task& task_i = * new(task::allocate_root())
+                GradStabCal_B_Task& task_i = * new(tbb::task::allocate_root())
                     GradStabCal_B_Task(PML,Tab_Gradiant_Stabilisee,&Tab_Volume_Cellule[Nb_Noeud*i],Type_FF,Sup_NN_GS,
                     Tab_Ind_Noeud_Tet,Tab_Ind_Cel_Elem_Tet,Tab_Ind_S_Elem_Tet,Tab_Id_in_S_Elem_Tet,Tab_Coord_Noeud_Elem,
                     &Ind_Sommet,&Ind_Tet,&Mutex_IS,&Mutex_IT,&Mutex_P,i);
@@ -749,7 +749,7 @@ void Integration_Stabilisee_Paral
 
     long T_0=clock();
 
-    task::spawn_root_and_wait(List_GradStabCal_Task);
+    tbb::task::spawn_root_and_wait(List_GradStabCal_Task);
 
     long T_1=clock();
 
@@ -780,7 +780,7 @@ void Integration_Stabilisee_Paral
 
     for(i=0;i<Size_Tab_GS;i++)
     {
-        concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::iterator j;
+        tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::iterator j;
         for(j=Tab_Gradiant_Stabilisee[i]->begin();j!=Tab_Gradiant_Stabilisee[i]->end();j++)
         {
             pair<const long,C_Vec3d>& Ref_Paire_j=*j;

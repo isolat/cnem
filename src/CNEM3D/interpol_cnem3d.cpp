@@ -130,7 +130,7 @@ vector<double>* P_Vec_Gard=new vector<double>;
     cout<<"\ninterpolation------------------------------------------------------------------\n"<<endl;
 
     //task_scheduler_init init(nb_core_for_ff_cal);
-	size_t nb_core_for_ff_cal=task_scheduler_init::default_num_threads();
+	size_t nb_core_for_ff_cal=tbb::task_scheduler_init::default_num_threads();
     
     cout<<"\nnb thread : "<<nb_core_for_ff_cal<<endl;
     
@@ -242,7 +242,7 @@ C_Interpolator3d::C_Interpolator3d(size_t Nb_Noeud, double* Tab_Noeud, size_t Nb
 	//-----------------------------------------------------------------------//
 
 	//task_scheduler_init init(nb_core_for_ff_cal);
-	nb_core_for_ff_cal = task_scheduler_init::default_num_threads();
+	nb_core_for_ff_cal = tbb::task_scheduler_init::default_num_threads();
 
 	cout << "\nnb thread : " << nb_core_for_ff_cal << endl;
 
@@ -283,7 +283,7 @@ C_Interpolator3d::C_Interpolator3d(size_t Nb_Noeud, double* Tab_Noeud, size_t nb
 	//-----------------------------------------------------------------------//
 
 	//task_scheduler_init init(nb_core_for_ff_cal);
-	nb_core_for_ff_cal = task_scheduler_init::default_num_threads();
+	nb_core_for_ff_cal = tbb::task_scheduler_init::default_num_threads();
 
 	cout << "\nnb thread : " << nb_core_for_ff_cal << endl;
 

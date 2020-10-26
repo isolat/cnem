@@ -120,11 +120,11 @@ vector<size_t>* P_Vec_Ind_Noeud_Tet)
     cout<<"\nIntegration -------------------------------------------------------------------\n"<<endl;
 
     //task_scheduler_init init(nb_core_for_gs_cal);
-	size_t nb_core_for_gs_cal=task_scheduler_init::default_num_threads();
+	size_t nb_core_for_gs_cal=tbb::task_scheduler_init::default_num_threads();
     
     cout<<"\nnb thread : "<<nb_core_for_gs_cal<<endl;
         
-    concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee=NULL;
+	tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee=NULL;
     double* Tab_Volume_Cellule=NULL;
      
     Integration_Stabilisee_Paral
@@ -158,7 +158,7 @@ vector<size_t>* P_Vec_Ind_Noeud_Tet)
     {
         P_Vec_Vol_Cel->push_back(Tab_Volume_Cellule[i]);
         P_Vec_Nb_Contrib->push_back(Tab_Gradiant_Stabilisee[i]->size());
-        concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::iterator j;
+        tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>::iterator j;
         for(j=Tab_Gradiant_Stabilisee[i]->begin();j!=Tab_Gradiant_Stabilisee[i]->end();j++)
         {
             pair<const long,C_Vec3d> paire_j=*j;

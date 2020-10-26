@@ -37,7 +37,7 @@ struct HashCompareGSKey
 
 void Integration_Stabilisee_Paral
 (C_Meshless_3d* PML,
- concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**& Tab_Gradiant_Stabilisee,double*& Tab_Volume_Cellule,
+ tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**& Tab_Gradiant_Stabilisee,double*& Tab_Volume_Cellule,
  long Type_Int,long Type_FF,long nb_thread,long Sup_NN_GS,
  vector<long>* P_Ind_Voisin,vector<double>* P_Phi_Voisin,
  vector<long>* Tab_Ind_Noeud_Tet,vector<long>* Tab_Ind_Cel_Elem_Tet,
@@ -45,10 +45,10 @@ void Integration_Stabilisee_Paral
  vector<double>* Tab_Coord_Noeud_Elem);
 
 void Calcul_Erreur_Gradiant_Stabilise
-(concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee,double* Tab_Volume_Cellule,double* Tab_Noeud,long Nb_Noeud);
+(tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>** Tab_Gradiant_Stabilisee,double* Tab_Volume_Cellule,double* Tab_Noeud,long Nb_Noeud);
 
 void Elimination_Nouveaux_Noeuds_DVC_de_GS
-(concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**& Tab_Gradiant_Stabilisee,double*& Tab_Volume_Cellule,
+(tbb::concurrent_hash_map<const long,C_Vec3d,HashCompareGSKey>**& Tab_Gradiant_Stabilisee,double*& Tab_Volume_Cellule,
  long Nb_Noeud_Ini,long Nb_Noeud,vector<long>* P_Ind_Voisin,vector<double>* P_Phi_Voisin);
 
 //---------------------------------------------------------------------------//

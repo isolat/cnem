@@ -27,7 +27,7 @@ Please report bugs to illoul_lounes@yahoo.fr */
 
 //---------------------------------------------------------------------------//
 
-class Interpol_Task: public task 
+class Interpol_Task: public tbb::task 
 {
 public:
     C_Meshless_3d* PML;
@@ -40,9 +40,9 @@ public:
     vector<double>* P_Vec_Phi;
     vector<double>* P_Vec_Grad;
     long* P_Ind_Point;
-    mutex* P_Mutex_IP;
-    mutex* P_Mutex_LO;
-    mutex* P_Mutex_P;
+	tbb::mutex* P_Mutex_IP;
+	tbb::mutex* P_Mutex_LO;
+	tbb::mutex* P_Mutex_P;
     long Nb_P;
     long id_task;
 
@@ -56,9 +56,9 @@ public:
                     vector<double>* P_Vec_Phi_,
                     vector<double>* P_Vec_Grad_,
                     long* P_Ind_Point_,
-                    mutex* P_Mutex_IP_,
-                    mutex* P_Mutex_LO_,
-                    mutex* P_Mutex_P_,
+                    tbb::mutex* P_Mutex_IP_,
+		            tbb::mutex* P_Mutex_LO_,
+		            tbb::mutex* P_Mutex_P_,
                     long id_task_):
                     PML(PML_),
                     Nb_Point(Nb_Point_),
@@ -74,10 +74,10 @@ public:
                     P_Mutex_LO(P_Mutex_LO_),
                     P_Mutex_P(P_Mutex_P_),
                     id_task(id_task_){}
-    task* execute();
+    tbb::task* execute();
 };
 
-task* Interpol_Task::execute()
+tbb::task* Interpol_Task::execute()
 {
     //-----------------------------------------------------------------------//
 
@@ -119,7 +119,7 @@ task* Interpol_Task::execute()
 // Début section critique...
 //---------------------------------------------------------------------------//
         {
-            mutex::scoped_lock Lock_IP(*P_Mutex_IP);
+			tbb::mutex::scoped_lock Lock_IP(*P_Mutex_IP);
             Ind_Point=*P_Ind_Point;
             (*P_Ind_Point)++;
         }
@@ -197,12 +197,12 @@ task* Interpol_Task::execute()
     if(id_task==0)cout<<endl;
         
     /*{
-        mutex::scoped_lock Lock_P(*P_Mutex_P);
+        tbb::mutex::scoped_lock Lock_P(*P_Mutex_P);
         cout<<"nb calcul : "<<Nb_P<<" err : "<<Erreur_Max_FF<<endl;
     }*/
 
     {
-        mutex::scoped_lock Lock_LO(*P_Mutex_LO);
+        tbb::mutex::scoped_lock Lock_LO(*P_Mutex_LO);
 
         vector<size_t>::iterator itst;
         for(itst=Vec_Nb_Contrib_Loc.begin();itst!=Vec_Nb_Contrib_Loc.end();itst++)
@@ -262,18 +262,18 @@ void InterpolParal
 
     //-----------------------------------------------------------------------//
 
-    task_list List_Interpol_Task;
+    tbb::task_list List_Interpol_Task;
     long Ind_Point=0;
-    mutex Mutex_IP;
-    mutex Mutex_LO;
-    mutex Mutex_P;
+	tbb::mutex Mutex_IP;
+	tbb::mutex Mutex_LO;
+	tbb::mutex Mutex_P;
     
     //-----------------------------------------------------------------------//
        
     long i;
     for(i=0;i<nb_thread;i++)
     {
-        Interpol_Task& task_i = * new(task::allocate_root())
+        Interpol_Task& task_i = * new(tbb::task::allocate_root())
             Interpol_Task(PML,Nb_Point,Tab_Point,Type_FF,
                             P_Ind_Point,P_Vec_Nb_Contrib,P_Vec_INV,P_Vec_Phi,P_Vec_Gard,
                             &Ind_Point,&Mutex_IP,&Mutex_LO,&Mutex_P,i);
@@ -285,7 +285,7 @@ void InterpolParal
 
     long T_0=clock();
 
-    task::spawn_root_and_wait(List_Interpol_Task);
+	tbb::task::spawn_root_and_wait(List_Interpol_Task);
 
     long T_1=clock();
 
