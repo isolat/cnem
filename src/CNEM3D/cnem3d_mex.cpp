@@ -20,10 +20,10 @@ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 Please report bugs to illoul_lounes@yahoo.fr */
 
-#include <yvals.h>
+/*#include <yvals.h>
 #if (_MSC_VER >= 1600)
 #define __STDC_UTF_16__
-#endif
+#endif*/
 
 #include "mex.h"
 #include "scni_cnem3d.h"
