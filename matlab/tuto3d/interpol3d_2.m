@@ -5,7 +5,7 @@ close all;
 addpath('../bin');
 
 %%
-with_matlab=true;% comparison between matlab natural interpolation and the supplied library
+with_matlab=false;% comparison between matlab natural interpolation and the supplied library
 %%
 tic
 %% initialize the interpolator

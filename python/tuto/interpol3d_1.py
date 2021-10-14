@@ -9,7 +9,6 @@
 import shutil
 import re
 import math
-import cPickle
 import numpy as np
 import scipy as sp
 
@@ -24,8 +23,8 @@ t_ini = time.time()
 
 #-------------------------------------------------------------------------------
 # read nodes and boundary :
-print '\n--------------------------------------------------------------------------------\n'
-print 'creat dummy point for test...\n'
+print ('\n--------------------------------------------------------------------------------\n')
+print ('creat dummy point for test...\n')
 
 X,Y,Z=np.mgrid[-0.5:0.5:3j,-0.5:0.5:3j,-0.5:0.5:3j]
 XYZ_Noeud=np.zeros((X.reshape(-1).shape[0],3),dtype=np.float64,order='C')
@@ -46,8 +45,8 @@ XYZ_Point=XYZ_Point.reshape(-1)
 
 #-------------------------------------------------------------------------------
 # creat the interpolator
-print '\n--------------------------------------------------------------------------------\n'
-print 'creat the interpolator...\n'
+print ('\n--------------------------------------------------------------------------------\n')
+print ('creat the interpolator...\n')
 
 Type_FF=0
 Fxyz=NT.interpol(XYZ_Noeud,[],XYZ_Point,Type_FF)
@@ -58,13 +57,13 @@ Fxyz=NT.interpol(XYZ_Noeud,[],XYZ_Point,Type_FF)
 
 #----------------------------------------------------------------------------
 # interpolate variable filds : Var
-print '\n--------------------------------------------------------------------------------\n'
-print 'interpolate variable filds...\n'
+print ('\n--------------------------------------------------------------------------------\n')
+print ('interpolate variable filds...\n')
 
 # test : Var = XYZ_Noeud ==> interpolated Var on XYZ_Point = XYZ_Point
 
 Var=np.array(XYZ_Noeud)
-Var=Var.reshape((Var.shape[0]/3,3))
+Var=Var.reshape((int(Var.shape[0]/3),3))
 
 #interpolate Var :
 #Var_Int=Fxyz.interpolate(Var)
@@ -73,22 +72,22 @@ Mat_Int=Fxyz.mat_interpol_glob()
 Var_Int=Mat_Int*Var
 
 elapsed = time.time() - t_ini
-print 'elapsed : ',elapsed
+print ('elapsed : ',elapsed)
 
 XYZ_Point=np.array(XYZ_Point)
-XYZ_Point=XYZ_Point.reshape((XYZ_Point.shape[0]/3,3))
+XYZ_Point=XYZ_Point.reshape((int(XYZ_Point.shape[0]/3),3))
 
 Dif=Var_Int-XYZ_Point
 
 maxdif=0.
 
-for i in xrange(len(Dif)):
+for i in range(len(Dif)):
     if Fxyz.In_Out[i] : # point interpolation in the domain 
         maxdif_i=max(abs(Dif[i]))
         if maxdif_i>maxdif:
             maxdif=maxdif_i
         
-print 'err max : ', maxdif
+print ('err max : ', maxdif)
 
 #-------------------------------------------------------------------------------
 

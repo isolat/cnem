@@ -24,6 +24,9 @@ compiler=distutils.ccompiler.new_compiler(verbose=1)
 import ctypes
 _64=ctypes.sizeof(ctypes.c_voidp)==8
 
+import sys
+py2=sys.version_info.major == 2
+
 if os.name=='nt':
     args_0=['/DTETLIBRARY','/EHsc','/D_CRT_SECURE_NO_WARNINGS']
     args_1=['/EHsc','/D_CRT_SECURE_NO_WARNINGS','/Od']
@@ -50,7 +53,7 @@ obj_pred=compiler.compile([os.path.abspath(SRC_DIR+'/TETGEN/predicates.cpp')],\
                           include_dirs=[SRC_DIR+'/TETGEN/'],output_dir='temp',extra_preargs=args_1)
 Nom_Module='CNEM3D'
 Module=Extension(Nom_Module,
-                 define_macros = [('PYTHON_VERSION', 2)],
+                 define_macros = [('PYTHON_VERSION', 2 if py2 else 3)],
                  include_dirs=[SRC_DIR+'/CNEM3D',SRC_DIR+'/TETGEN',SRC_DIR+'/UTILE',TBB_INC_DIR],
                  library_dirs=[TBB_LIB_DIR],
                  libraries=['tbb'],

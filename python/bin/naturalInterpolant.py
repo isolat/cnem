@@ -21,21 +21,18 @@
 ##
 ## Please report bugs to illoul_lounes@yahoo.fr 
 
+import os
+my_dir=os.path.abspath(os.path.dirname(__file__))
+os.add_dll_directory(os.path.normpath(os.path.join(my_dir,'../../tbb-2020.1/win/tbb/bin/intel64/vc14')))
 import CNEM3D
+
 from numpy import array as nparray
 from numpy import zeros
 from numpy import roll
 from scipy import sparse
 import math
 import array
-import os
 import numpy as np
-
-my_dir=os.path.abspath(os.path.dirname(__file__))
-#os.putenv('PATH',os.getenv('PATH')+os.pathsep+my_dir)
-
-import sys
-sys.path.append('Z:/DATA/1/dev/actu/mesh')
 
 class interpol:
 
@@ -47,7 +44,7 @@ class interpol:
         XYZ_Noeud_c=list(XYZ_Noeud)
         IN_Tri_Ini_c=list(IN_Tri_Ini)
 
-        self.nb_noeud_ini=len(XYZ_Noeud_c)/3
+        self.nb_noeud_ini=int(len(XYZ_Noeud_c)/3)
 
         if Mesher == 'tetgen' :
 
@@ -72,7 +69,7 @@ class interpol:
                                          min_max_xyz[5]-min_max_xyz[4]])
                 Coef=1.5
                                                                     
-                for i in xrange(len(noeud_bbox)/3) :
+                for i in range(len(noeud_bbox)/3) :
                     for j in range(3):
                         XYZ_Noeud_c.append(float(noeud_bbox[3*i+j])*R*Coef+O[j])
                 
@@ -113,13 +110,13 @@ class interpol:
             flat_tet_on_bord=tet_bord[id_tet_flat]
 
             for i in range(len(volTet)):
-                print volTet[i],tet_bord[i]
+                print (volTet[i],tet_bord[i])
             
-            print id_tet_flat
+            print (id_tet_flat)
 
-            print flat_tet_on_bord
+            print (flat_tet_on_bord)
 
-            print np.argwhere(flat_tet_on_bord==False)
+            print (np.argwhere(flat_tet_on_bord==False))
             
             DNet=roll(nparray(DNet).reshape(-1,4),-1,axis=1).reshape(-1)
             DTri=[float(i+1) for i in DTri]
@@ -182,7 +179,7 @@ class interpol:
         
         indptr=zeros(len(Nb_Contrib)+1,dtype='int')
         indptr[1:len(Nb_Contrib)+1]=Nb_Contrib
-        for i in xrange(len(Nb_Contrib)):
+        for i in range(len(Nb_Contrib)):
             indptr[i+1]+=indptr[i]
 
         Mat_FF=sparse.csr_matrix((FF,INV,indptr),shape=(len(IN_Point),self.nb_noeud_ini+I),dtype='double')
@@ -251,15 +248,15 @@ def scni(XYZ_Noeud,IN_Tri_Ini,Type_FF,Sup_NN_GS):
     XYZ_Noeud_New=nparray(XYZ_Noeud_New)
     XYZ_Noeud_New=XYZ_Noeud_New.reshape((XYZ_Noeud_New.shape[0]/3,3))
     IN_Tri_Ini_New=nparray(IN_Tri_Ini_New)
-    IN_Tri_Ini_New=IN_Tri_Ini_New.reshape((IN_Tri_Ini_New.shape[0]/3,3))
+    IN_Tri_Ini_New=IN_Tri_Ini_New.reshape((int(IN_Tri_Ini_New.shape[0]/3),3))
     IN_Tri=nparray(IN_Tri)
-    IN_Tri=IN_Tri.reshape((IN_Tri.shape[0]/3,3))
+    IN_Tri=IN_Tri.reshape((int(IN_Tri.shape[0]/3),3))
     IN_Tet=nparray(IN_Tet)
-    IN_Tet=IN_Tet.reshape((IN_Tet.shape[0]/4,4))
+    IN_Tet=IN_Tet.reshape((int(IN_Tet.shape[0]/4),4))
     INV_NN=nparray(INV_NN)
-    INV_NN=INV_NN.reshape((INV_NN.shape[0]/3,3))
+    INV_NN=INV_NN.reshape((int(INV_NN.shape[0]/3),3))
     PNV_NN=nparray(PNV_NN)
-    PNV_NN=PNV_NN.reshape((PNV_NN.shape[0]/3,3))
+    PNV_NN=PNV_NN.reshape((int(PNV_NN.shape[0]/3),3))
     IN_New_Old=nparray(IN_New_Old)
     IN_Old_New=nparray(IN_Old_New)
     
@@ -285,13 +282,13 @@ def mesh(XYZ_Noeud,IN_Tri_Ini):
         IN_Tri_Ini_New.append(IN_New_Old[IN_Tri_Ini[i]]-1)
 
     XYZ_Noeud_New=nparray(XYZ_Noeud_New)
-    XYZ_Noeud_New=XYZ_Noeud_New.reshape((XYZ_Noeud_New.shape[0]/3,3))
+    XYZ_Noeud_New=XYZ_Noeud_New.reshape((int(XYZ_Noeud_New.shape[0]/3),3))
     IN_Tri_Ini_New=nparray(IN_Tri_Ini_New)
-    IN_Tri_Ini_New=IN_Tri_Ini_New.reshape((IN_Tri_Ini_New.shape[0]/3,3))
+    IN_Tri_Ini_New=IN_Tri_Ini_New.reshape((int(IN_Tri_Ini_New.shape[0]/3),3))
     IN_Tri=nparray(IN_Tri)
-    IN_Tri=IN_Tri.reshape((IN_Tri.shape[0]/3,3))
+    IN_Tri=IN_Tri.reshape((int(IN_Tri.shape[0]/3),3))
     IN_Tet=nparray(IN_Tet)
-    IN_Tet=IN_Tet.reshape((IN_Tet.shape[0]/4,4))
+    IN_Tet=IN_Tet.reshape((int(IN_Tet.shape[0]/4),4))
     IN_New_Old=nparray(IN_New_Old)
     IN_Old_New=nparray(IN_Old_New)
     
